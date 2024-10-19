@@ -6,6 +6,7 @@
 //
 
 import Testing
+@testable import GyroSteer
 
 struct GyroSteerTests {
 
