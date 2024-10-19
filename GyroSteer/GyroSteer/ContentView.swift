@@ -83,12 +83,10 @@ struct ContentView: View {
     }
     
     private func startDataCollection() {
+        guard let fileURL = documentURL else { return }
+        
         timer = Timer.scheduledTimer(withTimeInterval: 15.0, repeats: true) { _ in
-            self.startGyroUpdates()
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                self.stopGyroUpdates()
-            }
+            self.appendDataToCSV()
         }
     }
 
@@ -130,9 +128,10 @@ struct ContentView: View {
             DocumentPickerButton(documentURL: $documentURL) {
                 guard let fileURL = documentURL else { return }
                 createCSVFile(at: fileURL)
+                startDataCollection()
             }
-            .frame(height: 80) // EDIT ME -- IT'S NOT RENDERING GOOD
-            .padding()
+            .frame(height: 500) // EDIT ME -- IT'S NOT RENDERING GOOD
+            .padding(.top, 20)
             
             if let url = documentURL {
                 Text("SAVED AT: \(url.absoluteString)")
@@ -141,8 +140,17 @@ struct ContentView: View {
             }
         }
         
+        List {
+            ForEach(items) { item in
+                Text("ITEM AT: \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+            }
+            .onDelete(perform: deleteItems)
+        }
+        
         .onAppear {
-            startDataCollection()
+            if documentURL != nil {
+                startDataCollection()
+            }
         }
         .onDisappear {
             timer?.invalidate()
@@ -171,26 +179,22 @@ import UIKit
 
 struct DocumentPickerButton: UIViewControllerRepresentable {
     @Binding var documentURL: URL?
-    var onFilePicked: () -> Void // Closure for file-picked callback
-
-    // Create the view controller
+    var onFilePicked: () -> Void
+    
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
         let picker = UIDocumentPickerViewController(forExporting: [], asCopy: true)
-        picker.delegate = context.coordinator // Set the delegate to the coordinator
+        picker.delegate = context.coordinator
         return picker
     }
 
-    // Update the view controller (no updates needed)
     func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {
-        // No updates needed
+        // NO UPDATES NEEDED
     }
 
-    // Create the coordinator
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
-    // Coordinator class to handle document picker delegate methods
     class Coordinator: NSObject, UIDocumentPickerDelegate {
         var parent: DocumentPickerButton
 
@@ -198,17 +202,15 @@ struct DocumentPickerButton: UIViewControllerRepresentable {
             self.parent = parent
         }
 
-        // Handle document picking
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             if let url = urls.first {
-                parent.documentURL = url // Store the selected URL
-                parent.onFilePicked() // Call the closure to handle file selection
+                parent.documentURL = url
+                parent.onFilePicked()
             }
         }
-
-        // Handle cancellation
+        
         func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-            print("Document picker was cancelled")
+            print("PICKER CANCELLED")
         }
     }
 }
