@@ -182,7 +182,7 @@ struct DocumentPickerButton: UIViewControllerRepresentable {
     var onFilePicked: () -> Void
     
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
-        let picker = UIDocumentPickerViewController(forExporting: [], asCopy: true)
+        let picker = UIDocumentPickerViewController(documentTypes: ["public.comma-separated-values"], in: .import)
         picker.delegate = context.coordinator
         return picker
     }

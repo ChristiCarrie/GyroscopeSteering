@@ -2,13 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSDocumentsUsageDescription</key>
-    <string>We need access to your documents to save the data.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need access to your photo library to select photos.</string>
-    <key>NSCameraUsageDescription</key>
-    <string>We need access to the camera to take photos.</string>
+	<key>NSDocumentsUsageDescription</key>
+	<string>We need access to your documents to save the data.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to select photos.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to the camera to take photos.</string>
 	<key>CFBundleIdentifier</key>
 	<string></string>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>com.yourcompany.yourapp</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScope</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>Your App Name</string>
+			<key>NSUbiquitousContainerSupport</key>
+			<true/>
+		</dict>
+	</dict>
 </dict>
 </plist>
