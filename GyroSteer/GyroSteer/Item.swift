@@ -2,7 +2,7 @@
 //  Item.swift
 //  GyroSteer
 //
-//  Created by Christina Lark on 10/19/24.
+//  Created by Christina Wu on 10/19/24.
 //
 
 import Foundation

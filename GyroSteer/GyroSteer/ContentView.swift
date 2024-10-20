@@ -9,6 +9,20 @@ import SwiftUI
 import SwiftData
 import CoreMotion
 
+class LandscapeViewController: UIHostingController<ContentView> {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .landscape
+    }
+
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        return .landscapeLeft // or .landscapeRight
+    }
+
+    override var shouldAutorotate: Bool {
+        return false
+    }
+}
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
@@ -63,7 +77,7 @@ struct ContentView: View {
     
     private func startGyroUpdates() {
         if motionManager.isGyroAvailable {
-            motionManager.gyroUpdateInterval = 0.5 // ADJUST AS NEEDED
+            motionManager.gyroUpdateInterval = 0.25 // ADJUST AS NEEDED
             motionManager.startGyroUpdates(to: .main) { data, error in
                 if let gyroData = data {
                     self.gyroX = gyroData.rotationRate.x
@@ -76,7 +90,7 @@ struct ContentView: View {
             }
         }
         alertTimer?.invalidate()
-        alertTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+        alertTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { _ in
             danger = false
             alert()
         }
@@ -91,7 +105,7 @@ struct ContentView: View {
     }
     
     private func alert() {
-        if abs(gyroX) > 4 || abs(gyroY) > 4 || abs(gyroZ) > 2 || (abs(gyroX) + abs(gyroY)) > 6 {
+        if abs(gyroX) > 3.5 || abs(gyroY) > 3.5 || abs(gyroZ) > 2.5 {
             // DIAL TO DETERMINE WHAT TURNING MAGNITUDE IS "DANGEROUS"
             danger = true
             counter = counter + 1
