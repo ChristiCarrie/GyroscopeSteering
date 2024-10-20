@@ -139,6 +139,7 @@ struct ContentView: View {
                     .foregroundStyle(.white)
                 
                 Button("Start Collection") {
+                    accessFile = false
                     startDataCollection()
                 }
                 .padding()
@@ -151,13 +152,13 @@ struct ContentView: View {
                 .padding()
                 
                 if buttonPressed {
-                    Text("Writing to file...")
+                    Text("Writing to file, iCloud linked!")
                         .foregroundStyle(.yellow)
                         .padding()
                 }
                 
                 if accessFile {
-                    Text("File sent!")
+                    Text("Finished!")
                         .foregroundStyle(.green)
                         .padding()
                 }
