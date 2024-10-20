@@ -12,12 +12,12 @@
 	<string></string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>com.yourcompany.yourapp</key>
+		<key>com.HackATL.GyroSteer</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScope</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>Your App Name</string>
+			<string>GyroSteer</string>
 			<key>NSUbiquitousContainerSupport</key>
 			<true/>
 		</dict>

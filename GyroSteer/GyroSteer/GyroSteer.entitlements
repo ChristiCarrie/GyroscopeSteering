@@ -6,7 +6,11 @@
     <array>
         <string>iCloud.com.HackATL.GyroSteer</string>
     </array>
-    <key>com.apple.developer.icloud-container-available</key>
+    <key>com.apple.developer.icloud-override-container-identifiers</key>
+    <array>
+        <string>iCloud.com.HackATL.GyroSteer</string>
+    </array>
+    <key>com.apple.developer.icloud.document-management.enabled</key>
     <true/>
 </dict>
 </plist>
