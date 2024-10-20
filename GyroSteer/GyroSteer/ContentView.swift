@@ -17,14 +17,17 @@ struct ContentView: View {
     @State private var gyroX: Double = 0.0
     @State private var gyroY: Double = 0.0
     @State private var gyroZ: Double = 0.0
-    @State private var timer: Timer?
+    // @State private var timer: Timer?
+    @State private var alertTimer : Timer?
     @State private var buttonPressed = false
     @State private var accessFile = false
+    @State private var danger = false
+    @State private var counter = 0
     
     private var fileURL: URL? {
         let fileManager = FileManager.default
         do {
-            let documentsURL = try fileManager.url(for: .userDirectory, in: .localDomainMask, appropriateFor: nil, create: true)
+            let documentsURL = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             return documentsURL.appendingPathComponent("rotrakData.csv")
         } catch {
             print("Error locating/creating CSV file")
@@ -60,7 +63,7 @@ struct ContentView: View {
     
     private func startGyroUpdates() {
         if motionManager.isGyroAvailable {
-            motionManager.gyroUpdateInterval = 0.1
+            motionManager.gyroUpdateInterval = 0.5 // ADJUST AS NEEDED
             motionManager.startGyroUpdates(to: .main) { data, error in
                 if let gyroData = data {
                     self.gyroX = gyroData.rotationRate.x
@@ -72,33 +75,54 @@ struct ContentView: View {
                 }
             }
         }
+        alertTimer?.invalidate()
+        alertTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+            danger = false
+            alert()
+        }
     }
     
     private func stopGyroUpdates() {
+        self.gyroX = 0.0
+        self.gyroY = 0.0
+        self.gyroZ = 0.0
+        accessFile = true
         motionManager.stopGyroUpdates()
+    }
+    
+    private func alert() {
+        if abs(gyroX) > 4 || abs(gyroY) > 4 || abs(gyroZ) > 2 || (abs(gyroX) + abs(gyroY)) > 6 {
+            // DIAL TO DETERMINE WHAT TURNING MAGNITUDE IS "DANGEROUS"
+            danger = true
+            counter = counter + 1
+        }
     }
     
     private func startDataCollection() {
         buttonPressed = true
         createCSVFile()
-        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
-            self.startGyroUpdates()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                self.stopGyroUpdates()
-            }
-        }
+        self.startGyroUpdates()
     }
     
     var body: some View {
-        VStack {
+        ZStack {
+            if (danger) {
+                Color.red
+                .ignoresSafeArea()
+            }
+            
             VStack {
                 Text("Gyroscope Data")
                     .font(.headline)
+                    .foregroundStyle(.white)
                     .padding()
                 
                 Text("Rotation Rate X: \(gyroX, specifier: "%.2f")")
+                    .foregroundStyle(.white)
                 Text("Rotation Rate Y: \(gyroY, specifier: "%.2f")")
+                    .foregroundStyle(.white)
                 Text("Rotation Rate Z: \(gyroZ, specifier: "%.2f")")
+                    .foregroundStyle(.white)
                 
                 Button("Start Collection") {
                     startDataCollection()
@@ -109,28 +133,30 @@ struct ContentView: View {
                     buttonPressed = false
                     accessFile = true
                     stopGyroUpdates()
-                    // FILE NOW
                 }
                 .padding()
                 
                 if buttonPressed {
                     Text("Writing to file...")
-                        .foregroundStyle(.red)
+                        .foregroundStyle(.yellow)
                         .padding()
                 }
                 
                 if accessFile {
-                    Text("Access file here...")
+                    Text("File sent!")
                         .foregroundStyle(.green)
                         .padding()
-                    // FILE HERE
                 }
+                
+                Text("Danger Counter: \(counter)")
+                    .foregroundStyle(.red)
+                    .padding()
             }
             .onAppear {
                 createCSVFile()
             }
             .onDisappear {
-                timer?.invalidate()
+                alertTimer?.invalidate()
                 stopGyroUpdates()
             }
         }

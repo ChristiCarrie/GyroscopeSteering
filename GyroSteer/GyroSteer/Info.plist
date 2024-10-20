@@ -10,6 +10,8 @@
 	<string>We need access to the camera to take photos.</string>
 	<key>CFBundleIdentifier</key>
 	<string></string>
+    <key>UIFileSharingEnabled</key>
+    <true/>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>com.HackATL.GyroSteer</key>
